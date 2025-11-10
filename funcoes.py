@@ -1,36 +1,84 @@
 from tabulate import tabulate
 
-def registrar_viagens(listaViagens):
-    nome_moto = input("digite o nome do motorista").strip()
-    destino = input("qual é o seu destino?").strip()
-    distancia = float(input("qual foi a distancia pecorrida"))
-    valor_gasto = float(input("qual foi o valor gasto de combustivel?"))
-    consumo = valor_gasto / distancia
-    viagem = {
-        "nome do motorista" : nome_moto,
-        "destino" : destino,
-        "distancia" : distancia,
-        "consumo" : consumo
-    }
-    listaViagens.append(viagem)
-    print(f"A viagem para o destino {destino} foi adicionada com sucesso")
+def registrar_viagem(listaViagens):
+    print("\n--- Registrar nova viagem ---")
+    motorista = input("Nome do motorista: ")
+    destino = input("Destino: ")
+    distancia = input("Distância percorrida (km): ")
+    gasto = input("Valor gasto com combustível (R$): ")
 
- 
-def exibirViagens(listaViagens):
-    tabela = [[livro["motorista"], livro["destino"], livro["distancia"], livro["consumo"]] for livro in listaViagens]
-    print(" Lista de Livros:")
-    print(tabulate(tabela, headers=["nome do motorista", "destino", "distancia", "consumo"], tablefmt="grid"))
-    print()
+    if distancia.isnumeric() and gasto.isnumeric():
+        distancia = float(distancia)
+        gasto = float(gasto)
 
-def buscarMotorista(listaViagens):
-    buscar = input("digite o motorista que voce deseja procurar")
-    while True:
-        for nome_moto in listaViagens:
-            if ["nome do motorista"].lower() == buscar.lower:
-                if nome_moto["distancia"] == "distancia":
-                    if nome_moto["distancia"] : "distancia"
-                    print(f"motorista encontrado com sucesso")
-                    
-  
+        if distancia > 0:
+            consumo = gasto / distancia
+            viagem = {
+                "motorista": motorista,
+                "destino": destino,
+                "distancia": distancia,
+                "gasto": gasto,
+                "consumo": round(consumo, 2)
+            }
+            listaViagens.append(viagem)
+            print(" Viagem registrada com sucesso!")
+        else:
+            print(" A distância deve ser maior que zero.")
+    else:
+        print(" Digite apenas números válidos para distância e gasto.")
 
-    
+
+def exibir_viagens(listaViagens):
+    print("\n--- Lista de Viagens ---")
+    if len(listaViagens) == 0:
+        print("Nenhuma viagem registrada.")
+    else:
+        tabela = []
+        for v in listaViagens:
+            tabela.append([v["motorista"], v["destino"], v["distancia"], v["gasto"], v["consumo"]])
+        print(tabulate(tabela, headers=["Motorista", "Destino", "Distância (km)", "Gasto (R$)", "Consumo (R$/km)"], tablefmt="grid"))
+
+
+def buscar_motorista(listaViagens):
+    print(" Buscar viagens por motorista ")
+    nome = input("Nome do motorista: ")
+    encontrou = False
+
+    for v in listaViagens:
+        if v["motorista"].lower() == nome.lower():
+            print(f"Motorista: {v['motorista']}")
+            print(f"Destino: {v['destino']}")
+            print(f"Distância: {v['distancia']} km")
+            print(f"Gasto: R$ {v['gasto']}")
+            print(f"Consumo: R$ {v['consumo']} por km\n")
+            encontrou = True
+
+    if not encontrou:
+        print("Nenhuma viagem encontrada para esse motorista.")
+
+
+def viagem_mais_cara(listaViagens):
+    print(" Viagem mais cara ")
+    if len(listaViagens) == 0:
+        print("Nenhuma viagem registrada.")
+    else:
+        mais_cara = listaViagens[0]
+        for v in listaViagens:
+            if v["gasto"] > mais_cara["gasto"]:
+                mais_cara = v
+
+        print(f"Motorista: {mais_cara['motorista']}")
+        print(f"Destino: {mais_cara['destino']}")
+        print(f"Gasto: R$ {mais_cara['gasto']}")
+
+
+def media_consumo(listaViagens):
+    print(" Média geral de consumo ")
+    if len(listaViagens) == 0:
+        print("Nenhuma viagem registrada.")
+    else:
+        soma = 0
+        for v in listaViagens:
+            soma += v["consumo"]
+        media = soma / len(listaViagens)
+        print(f"Média geral de consumo: R$ {round(media, 2)} por km")
